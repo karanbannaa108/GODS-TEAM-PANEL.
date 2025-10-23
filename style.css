@@ -1,0 +1,30 @@
+:root{
+  --bg:#07060a;
+  --card:#0f1014;
+  --accent:#e6f7ff;
+  --muted:#9aa4b2;
+  --primary:#6ee7b7;
+  --accent2:#00c2ff;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 10%, #0b0b0f 0%, #07060a 40%), linear-gradient(180deg,#040405,#07060a);font-family:Inter,system-ui,Arial;color:var(--accent);display:flex;align-items:center;justify-content:center;padding:20px}
+.panel{width:100%;max-width:520px}
+.hdr{text-align:center;margin-bottom:12px}
+.hdr h1{font-size:26px;margin:6px 0;color:var(--accent2);letter-spacing:0.6px;text-shadow:0 6px 30px rgba(0,194,255,0.08)}
+.hdr .sub{color:var(--muted);font-size:13px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;margin-bottom:12px;box-shadow:0 10px 40px rgba(0,0,0,0.6);text-align:center}
+.qr-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.qr{width:240px;height:240px;object-fit:cover;border-radius:12px;border:4px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.45)}
+.pay-note{color:var(--muted);font-size:13px;margin-bottom:10px}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.primary{background:linear-gradient(90deg,var(--primary),var(--accent2));color:#003;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.secondary{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.04)}
+.hidden{display:none}
+.input{width:100%;max-width:320px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--accent);margin-bottom:8px}
+.hint{font-size:13px;color:var(--muted)}
+.err{color:#ff8b8b;font-size:13px}
+.info{font-size:16px;margin:8px 0;color:var(--accent2);font-weight:700}
+.wa{color:var(--primary);text-decoration:none;font-weight:800}
+.foot{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}
+@media(min-width:720px){body{padding:40px}}
