@@ -10,7 +10,7 @@
   <main class="panel">
     <header class="hdr">
       <h1>GODS TEAM PANEL</h1>
-      <p class="sub">Scan & Pay using PhonePe — then press "I PAID" to continue</p>
+      <p class="sub">Scan & Pay using PhonePe — then press "I PAID". Payment must be confirmed by seller to proceed.</p>
     </header>
 
     <section id="payment" class="card">
@@ -19,26 +19,24 @@
       </div>
       <div class="pay-note">Scan this QR with PhonePe app and complete the payment.</div>
       <div class="actions">
-        <button id="paidBtn" class="btn primary">I PAID — Proceed to Login</button>
-        <a href="phonepe_qr.png" download class="btn secondary">Download QR</a>
+        <button id="paidBtn" class="btn primary">I PAID — Notify Seller</button>
+        <button id="sellerConfirmBtn" class="btn secondary">Seller: Confirm Payment</button>
       </div>
+      <div id="waitMsg" class="hint hidden">Payment recorded. Waiting for seller confirmation...</div>
     </section>
 
     <section id="login" class="card hidden">
-      <h2>Login</h2>
-      <p class="sub">Enter credentials to access panel</p>
-      <div class="form">
-        <input id="user" class="input" placeholder="Username" autocomplete="off">
-        <input id="pass" class="input" placeholder="Password" type="password" autocomplete="off">
-        <button id="loginBtn" class="btn primary">Login</button>
-        <div class="hint">Username: <strong>GODS TEAM</strong> &nbsp; Password: <strong>8989</strong></div>
-        <div id="err" class="err hidden">Invalid credentials</div>
+      <h2>Login (Auto)</h2>
+      <p class="sub">Payment confirmed — press to access panel</p>
+      <div class="actions" style="justify-content:center">
+        <button id="accessBtn" class="btn primary">Access Panel</button>
       </div>
+      <div class="hint">(Credentials are checked automatically)</div>
     </section>
 
     <section id="success" class="card hidden">
       <h2>Access Granted</h2>
-      <p class="sub">Payment & Login Verified</p>
+      <p class="sub">Payment verified — welcome.</p>
       <div class="info">Contact on WhatsApp: <a class="wa" href="https://wa.me/917878622242" target="_blank">+91 78786 22242</a></div>
       <div class="actions">
         <button id="logout" class="btn secondary">Logout</button>
@@ -50,51 +48,72 @@
 
 <script>
 document.getElementById('yr').innerText = new Date().getFullYear();
-const paidBtn = document.getElementById('paidBtn');
-const loginSection = document.getElementById('login');
-const paymentSection = document.getElementById('payment');
-const successSection = document.getElementById('success');
-const loginBtn = document.getElementById('loginBtn');
-const logout = document.getElementById('logout');
-const err = document.getElementById('err');
 
+const paidBtn = document.getElementById('paidBtn');
+const sellerConfirmBtn = document.getElementById('sellerConfirmBtn');
+const waitMsg = document.getElementById('waitMsg');
+const paymentSection = document.getElementById('payment');
+const loginSection = document.getElementById('login');
+const successSection = document.getElementById('success');
+const accessBtn = document.getElementById('accessBtn');
+const logout = document.getElementById('logout');
+
+// When buyer clicks I PAID
 paidBtn.addEventListener('click', ()=>{
-  // mark as paid and show login
-  localStorage.setItem('gods_paid','1');
-  paymentSection.classList.add('hidden');
-  loginSection.classList.remove('hidden');
+  // set a flag that buyer says they paid
+  localStorage.setItem('gods_payment_request','1');
+  waitMsg.classList.remove('hidden');
+  alert('Payment noted. Waiting for seller confirmation.');
 });
 
-loginBtn.addEventListener('click', ()=>{
-  const user = document.getElementById('user').value.trim();
-  const pass = document.getElementById('pass').value.trim();
-  if(user === 'GODS TEAM' && pass === '8989'){
+// Seller confirms payment (protected by seller pass)
+sellerConfirmBtn.addEventListener('click', ()=>{
+  // Ask for seller pass to confirm
+  const pass = prompt('Enter seller pass to confirm payment:');
+  // seller password is 8989 (as requested)
+  if(pass === '8989'){
+    // mark payment verified
+    localStorage.setItem('gods_payment_verified','1');
+    localStorage.removeItem('gods_payment_request');
+    alert('Payment confirmed — buyer may now access the panel.');
+    // if buyer present, show login (auto) immediately
+    paymentSection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+  } else {
+    alert('Incorrect seller pass.');
+  }
+});
+
+// On load: if already verified show login or success
+window.addEventListener('load', ()=>{
+  if(localStorage.getItem('gods_payment_verified') === '1'){
+    paymentSection.classList.add('hidden');
+    loginSection.classList.remove('hidden');
+  } else if(localStorage.getItem('gods_payment_request') === '1'){
+    waitMsg.classList.remove('hidden');
+  }
+});
+
+// Access panel (auto-login without showing username/password)
+accessBtn.addEventListener('click', ()=>{
+  // simulate auto auth: credentials are implicitly GODS TEAM / 8989
+  if(localStorage.getItem('gods_payment_verified') === '1'){
     localStorage.setItem('gods_logged','1');
     loginSection.classList.add('hidden');
     successSection.classList.remove('hidden');
   } else {
-    err.classList.remove('hidden');
-    setTimeout(()=> err.classList.add('hidden'),2500);
+    alert('Payment not yet verified by seller.');
   }
 });
 
 logout.addEventListener('click', ()=>{
-  localStorage.removeItem('gods_paid');
+  localStorage.removeItem('gods_payment_verified');
+  localStorage.removeItem('gods_payment_request');
   localStorage.removeItem('gods_logged');
   successSection.classList.add('hidden');
+  loginSection.classList.add('hidden');
   paymentSection.classList.remove('hidden');
-});
-
-// on load, restore state
-window.addEventListener('load', ()=>{
-  if(localStorage.getItem('gods_logged') === '1'){
-    paymentSection.classList.add('hidden');
-    loginSection.classList.add('hidden');
-    successSection.classList.remove('hidden');
-  } else if(localStorage.getItem('gods_paid') === '1'){
-    paymentSection.classList.add('hidden');
-    loginSection.classList.remove('hidden');
-  }
+  waitMsg.classList.add('hidden');
 });
 </script>
 </body>
